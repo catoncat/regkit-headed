@@ -59,6 +59,26 @@ finally:
 | `fetch_otp(email, extract=..., only_newer_than=...)` | Polls the mailbox; the default extractor takes a 6-digit code at the start of the subject. `extract(sender, subject, body)` replaces it |
 | `click_button_by_text`, `wait_url_contains`, `shot` | Small page helpers |
 | `build_spy_js`, `read_spy_log`, `dump_spy` | In-page fetch/XHR recorder |
+| `solve_turnstile_headless(page_url, sitekey=None, proxy=None)` | No browser. Runs the [`cfsolve`](https://github.com/chris124567/cfsolve) `challenge` binary and returns `{token, cfClearance, userAgent}` |
+
+Headless solve (`RH_CFSOLVE_BIN`, `RH_CFSOLVE_PROFILE`):
+
+```python
+token = solve_turnstile_headless(
+    "https://auth.example.com/sign-up",
+    "0x4AAAAAAA...",
+    proxy="http://127.0.0.1:8080",   # must be the same egress as the later HTTP call
+)["token"]
+```
+
+Build the binary with `cargo build --release --bin challenge` (the default `cfsolve`
+binary is the deobfuscator, not the solver). Point `RH_CFSOLVE_PROFILE` at a profile
+kept next to its answers directory, such as `profiles/safari-26-ios.json`.
+`proxy` is never taken from `RH_PROXY`. Omit `sitekey` to solve the first widget or
+clear a challenge page (`cf_clearance`). Pass `blank_page=True` only when you have a
+sitekey and no page HTML. A `cf_clearance` cookie also requires the business request
+to match the profile's TLS fingerprint and User-Agent; a widget token usually needs
+only the same egress IP.
 
 Notes:
 

@@ -19,10 +19,12 @@ from .browser import (
 from .turnstile import (
     MIN_TOKEN_LEN,
     TURNSTILE_PATCH_JS,
+    CfsolveError,
     wait_turnstile,
     turnstile_state,
     read_token,
     click_turnstile_checkbox,
+    solve_turnstile_headless,
 )
 from .otp import fetch_otp, default_extractor
 from .dom import click_button_by_text, wait_url_contains, shot
